@@ -1,0 +1,66 @@
+#!/usr/bin/python
+
+import sys
+import subprocess  
+import re
+
+def main():
+	progdict = {
+		"rhythmbox" : {
+			"-play-pause": "rhythmbox-client --play-pause",
+			"-stop": "rhythmbox-client --stop",
+			"-previous": "rhythmbox-client --previous",
+			"-next": "rhythmbox-client --next"
+			# "-status": "rhythmbox-client --print-playing"
+		},
+		"pragha" : {
+			"-play-pause": "pragha -t",
+			"-stop": "pragha -s",
+			"-previous": "pragha -r",
+			"-next": "pragha -n"
+			# "-status": "pragha -cx | grep state"
+		},
+		"audacious" : {
+			"-play-pause": "audacious -t",
+			"-stop": "audacious -s",
+			"-previous": "audacious -r",
+			"-next": "audacious -f"
+		},
+		"banshee" : {
+			"-play-pause": "banshee --toggle-playing",
+			"-stop": "banshee --stop",
+			"-previous": "banshee --previous",
+			"-next": "banshee --next"
+		}
+	}
+	issueCommand(progdict, sys.argv[1])
+
+def makePattern(programdict):
+	pattern = ""
+	for k, v in enumerate(programdict.keys()):
+		pattern += ".*" + v + ".*$"
+		if k < len(programdict) - 1:
+			pattern += "|"
+	return pattern
+
+def runBashCommand(command):
+	process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+	return process.communicate()[0]
+
+def findMainProcess(progdict):
+	mainprocess = ""
+	for process in re.findall(makePattern(progdict), runBashCommand("ps aux"), re.MULTILINE):
+		# if process[16:21] > mainprocess[16:21]: # > CPU USAGE
+		# if process[60:65] < mainprocess[60:65]: # Most recent
+		if process[9:][:7] > mainprocess[9:][:7]: # > PID
+			mainprocess = process
+	return mainprocess
+
+def issueCommand(progdict, command):
+	process = findMainProcess(progdict)
+	for key, lst in progdict.iteritems():
+		if re.search(key, process):
+			return runBashCommand(progdict[key][command])
+
+
+main()
