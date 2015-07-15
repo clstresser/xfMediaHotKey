@@ -12,13 +12,13 @@ Configuration
 
 The only thing that needs to be done for this to work, is replace XFCE's keyboard shortcuts from pragha's to xfmhk. 
 In xfce4-keyboard-settings, on the Application Shortcuts tab, you need to replace:
-    * "pragha --next" for "/path/to/xfmhk -next";
-    * "pragha --prev" for "/path/to/xfmhk -previous";
-    * "pragha --pause" for "/path/to/xfmhk -play-pause";
+* "pragha --next" for "/path/to/xfmhk -next";
+* "pragha --prev" for "/path/to/xfmhk -previous";
+* "pragha --pause" for "/path/to/xfmhk -play-pause";
 
 
 Requirements
 ============
 
 xfMediaHotKey requires the following:
-    *python >= 2.7
+* python >= 2.7
